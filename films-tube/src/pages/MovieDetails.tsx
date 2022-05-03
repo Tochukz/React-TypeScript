@@ -30,6 +30,13 @@ function MovieDetails(props: {fetchMovie: Function}) {
          });
   }
 
+  const stars = (rating: number): number[] => {
+    if (!rating) {
+      return [];
+    }
+    return Array(Math.trunc(rating/2)).fill(1);
+  }
+
   return (
     <Base>
       <div className='row movie-details'>
@@ -105,7 +112,11 @@ function MovieDetails(props: {fetchMovie: Function}) {
                 <td>
                   <strong>IMDB Rating</strong>
                 </td>
-                <td>{ movie.imdb_rating}</td>
+                <td>
+                  { stars(movie.imdb_rating).map((el, i) => <i className='fa fa-star' key={i}></i>) }
+                  { (movie.imdb_rating / 2) > Math.trunc(movie.imdb_rating/2) && <i className='fa fa-star-half-o'></i> } &nbsp;
+                  { movie.imdb_rating }
+                </td>
               </tr>
             </tbody>
           </table>

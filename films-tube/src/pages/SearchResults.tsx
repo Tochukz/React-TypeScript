@@ -41,29 +41,31 @@ function SearchResults(props: { searchMovie: Function, searchResult: IMovie[]}) 
                 </div>
               </div>
               <div className="col-sm-6">
-                <h3>{ movie.title }</h3>
-                <p>{ movie.slug }</p>
-                <p>{ new Date(movie.released_on).toDateString() }</p>
-                <p>{ movie.director }</p>
-                <p>{ movie.overview }</p>
-                <p>
-                  { movie.genres.map((genre, i, arry) => 
-                    <span key={i}>
-                        { genre } 
+                <div className="details-body">
+                  <h3>{ movie.title }</h3>
+                  <p>{ movie.slug }</p>
+                  <p>{ new Date(movie.released_on).toDateString() }</p>
+                  <p>{ movie.director }</p>
+                  <p>{ movie.overview }</p>
+                  <p>
+                    { movie.genres.map((genre, i, arry) => 
+                      <span key={i}>
+                          { genre } 
+                          { i < arry.length -1 ? ', ' : ' '} 
+                      </span> 
+                    )}
+                  </p>
+                  <p>
+                    { movie.cast.map((cast, i, arry) => 
+                      <span key={i}>
+                        { cast } 
                         { i < arry.length -1 ? ', ' : ' '} 
-                    </span> 
-                  )}
-                </p>
-                <p>
-                  { movie.cast.map((cast, i, arry) => 
-                    <span key={i}>
-                      { cast } 
-                      { i < arry.length -1 ? ', ' : ' '} 
-                    </span>
-                  )}
-                </p>
-                <p>{ movie.length }</p>
-                <p>{ movie.classification }</p>
+                      </span>
+                    )}
+                  </p>
+                  <p>{ movie.length }</p>
+                  <p>{ movie.classification }</p>
+                </div>
               </div>
             </div>    
          )}
