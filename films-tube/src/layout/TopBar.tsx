@@ -3,8 +3,10 @@ import { useRef, useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { connect } from 'react-redux';
 import IMovie from '../interfaces/IMovie';
-import '../scss/topbar.scss';
 import { searchMovie } from '../store/movie.slice';
+import emitter from '../services/event-emitter';
+
+import '../scss/topbar.scss';
 
  function TopBar(props: {search: Function, searchResult: IMovie[]}) {
   const inputRef: any = useRef();
@@ -20,11 +22,10 @@ import { searchMovie } from '../store/movie.slice';
         return;
     }
     props.search(val)
-          .then((response: any) => {
-    
-          }).catch((err: any) => {
-
-          }) 
+          .then()
+          .catch((error: any) => {
+            emitter.emit('alert', {type: 'error', error});
+          });
   }
 
   const pickSelected = (event: any) => {
@@ -32,10 +33,11 @@ import { searchMovie } from '../store/movie.slice';
     if(!Array.isArray(props.searchResult)) {
         return;
     }
-    const movie = props.searchResult.find(mv => `${mv.title} ${mv.slug}` == val);
+    let movie = props.searchResult.find(mv => mv.title == val);
     if (movie) {
-        console.log('navigate', `/details/${movie.id}`);
         navigate(`/details/${movie.id}`);
+    } else {
+        navigate(`/search-results/${val}`);
     }
   }
 
@@ -65,7 +67,7 @@ import { searchMovie } from '../store/movie.slice';
                        onKeyUp={suggest} 
                        ref={inputRef} /> 
                 <datalist id="resultList">
-                  { Array.isArray(props.searchResult) && props.searchResult.map((movie, index) => <option value={`${movie.title} ${movie.slug}`} key={index} />) }   
+                  { Array.isArray(props.searchResult) && props.searchResult.map((movie, index) => <option value={movie.title} key={index} />) }   
                 </datalist>            
             
             </div>

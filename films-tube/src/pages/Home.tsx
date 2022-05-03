@@ -5,31 +5,32 @@ import IMovie from '../interfaces/IMovie';
 import Base from '../layout/Base';
 import Genre from '../components/Genre';
 import { getMovies } from '../store/movie.slice';
+import emitter from '../services/event-emitter';
 
 function Home(props: { movies: IMovie[], fetchMovies: Function }) {
   const [names, setNames] = useState([]);
   const [genres, setGenres] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
      fetchMovies();
   }, []);
 
   const fetchMovies = () => {
+    setIsLoading(true);
      props.fetchMovies()
           .then((response: any) => {                 
-          if (response.status == 200) {     
-              console.log('mov', response.data);              
+          if (response.status == 200) {              
             sortMovies(response.data.movies);
+            setIsLoading(false);
           }
-          }).catch((err: any) => {
-            console.error('Fetch error:',  err);
+          }).catch((error: any) => {
+            emitter.emit('alert', {type: 'error', error})
          });
   }
 
   const sortMovies = (movies: IMovie[]) => {
      const groups: any = {}; 
-     console.log(movies.length);
-
      movies.forEach((movie, i) => {         
          movie.genres.forEach(genre => {
             if(!groups.hasOwnProperty(genre)) {
@@ -45,6 +46,7 @@ function Home(props: { movies: IMovie[], fetchMovies: Function }) {
 
   return (
     <Base>
+      { isLoading? <h3 className='text-center'>Loading...</h3> : ''}
       { genres.map((movies, i) => <Genre movies={movies} key={i} genre={names[i]} />)}
     </Base>
   )

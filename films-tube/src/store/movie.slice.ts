@@ -36,7 +36,7 @@ export const getMovie = (movieId: string) => async () => {
 }
 
 export const searchMovie = (query: string) => async (dispatch: Function) => {
-  const response = await service.get(`movies?q=${query}`);
+  const response = await service.get(`/movies?q=${query}`);
   if (response.status == 200) {
     dispatch(setSearchResult(response.data && response.data.movies));
   }

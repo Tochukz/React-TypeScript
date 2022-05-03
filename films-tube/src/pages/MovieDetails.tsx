@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import Base from '../layout/Base';
 import IMovie from '../interfaces/IMovie';
 import { getMovie } from '../store/movie.slice';
+import emitter from '../services/event-emitter';
 
 import '../scss/movie-details.scss';
 
@@ -21,21 +22,24 @@ function MovieDetails(props: {fetchMovie: Function}) {
   const fetchMovie = (movieId: string) => {
     props.fetchMovie(movieId)
          .then((movie: IMovie) => {
-            setMovie(movie);
-         }).catch((err: any) => {
-
+           if (movie) {
+             setMovie(movie);
+           } 
+         }).catch((error: any) => {
+           emitter.emit('alert', {type: 'error', error});
          });
   }
+
   return (
     <Base>
       <div className='row movie-details'>
         <div className="col-sm-12">
-          <h3>{movie && movie.title }</h3>
-          <p>{movie && movie.slug}</p>
+          <h3>{ movie.title }</h3>
+          <p>{ movie.slug}</p>
         </div>
         <div className="col-sm-6">          
            <div className='movie-div'>
-             <img src={movie && movie.poster}  />
+             <img src={ movie.poster }  />
            </div>
         </div>
         <div className="col-sm-6">
@@ -45,49 +49,63 @@ function MovieDetails(props: {fetchMovie: Function}) {
                 <td>
                   <strong>Overview</strong>
                 </td>
-                <td>{ movie && movie.overview}</td>
+                <td>{ movie.overview}</td>
               </tr>
               <tr>
                 <td>
                   <strong>Release Data</strong>
                 </td>
-                <td>{ movie && new Date(movie.released_on).toDateString()}</td>
+                <td>{ new Date(movie.released_on).toDateString() }</td>
               </tr>
               <tr>
                 <td>
                   <strong>Director</strong>
                 </td>
-                <td>{ movie && movie.director}</td>
+                <td>{ movie.director }</td>
               </tr>
               <tr>
                 <td>
                   <strong>Cast</strong>
                 </td>
-                <td>{ movie && movie.cast && movie.cast.map((cast, i) => <span key={i}>{ cast }</span>)}</td>
+                <td>{
+                   movie.cast && movie.cast.map((cast, i, arry) => 
+                    <span key={i}>
+                      { cast }
+                      { i < arry.length -1 ? ', ' : ' '} 
+                    </span>
+                  )}
+                </td>
               </tr>
               <tr>
                 <td>
                   <strong>Clasification</strong>
                 </td>
-                <td>{ movie && movie.classification}</td>
+                <td>{ movie.classification}</td>
               </tr>
               <tr>
                 <td>
                   <strong>Length</strong>
                 </td>
-                <td>{ movie && movie.length}</td>
+                <td>{ movie.length }</td>
               </tr>
               <tr>
                 <td>
                   <strong>Genre</strong>
                 </td>
-                <td>{ movie && movie.genres && movie.genres.map((genre, i) => <span key={i}>{  genre}</span>)}</td>
+                <td>
+                  { movie.genres && movie.genres.map((genre, i, arry) => 
+                    <span key={i}>
+                      { genre }
+                      { i < arry.length -1 ? ', ' : ' '} 
+                    </span>
+                  )}
+                </td>
               </tr>
               <tr>
                 <td>
                   <strong>IMDB Rating</strong>
                 </td>
-                <td>{ movie && movie.imdb_rating}</td>
+                <td>{ movie.imdb_rating}</td>
               </tr>
             </tbody>
           </table>

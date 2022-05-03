@@ -5,8 +5,12 @@
       text-align: center;
     }
     .movie-p {
+      text-align: center;
       img {
         width: 100%;
+      }
+      img:hover {
+        width: 90%;
       }
     }
  }
